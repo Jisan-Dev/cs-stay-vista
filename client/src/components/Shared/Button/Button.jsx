@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 const Button = ({ label, onClick, disabled, outline, small, icon: Icon }) => {
   return (
     <button
@@ -20,22 +20,21 @@ const Button = ({ label, onClick, disabled, outline, small, icon: Icon }) => {
           ${small ? 'py-1' : 'py-3'}
           ${small ? 'font-light' : 'font-semibold'}
           ${small ? 'border-[1px]' : 'border-2'}
-        `}
-    >
+        `}>
       {Icon && (
         <Icon
           size={24}
-          className='
+          className="
               absolute
               left-4
               top-3
-            '
+            "
         />
       )}
       {label}
     </button>
-  )
-}
+  );
+};
 
 Button.propTypes = {
   label: PropTypes.string,
@@ -44,6 +43,6 @@ Button.propTypes = {
   outline: PropTypes.bool,
   small: PropTypes.bool,
   icon: PropTypes.elementType,
-}
+};
 
-export default Button
+export default Button;
