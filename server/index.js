@@ -47,7 +47,10 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    const roomCollection = client.db('StayVistaDB').collection('rooms');
+
     // auth related api
+    // to generate cookie and set to the http only cookies
     app.post('/jwt', async (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
@@ -75,6 +78,12 @@ async function run() {
       } catch (err) {
         res.status(500).send(err);
       }
+    });
+
+    // to get all room data
+    app.get('/rooms', async (req, res) => {
+      const rooms = await roomCollection.find().toArray();
+      res.send(rooms);
     });
 
     // Send a ping to confirm a successful connection
