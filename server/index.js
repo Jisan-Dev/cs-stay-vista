@@ -86,6 +86,14 @@ async function run() {
       res.send(rooms);
     });
 
+    // to get a specific room data  by _id
+    app.get('/rooms/:id', async (req, res) => {
+      const id = req.params.id;
+      const room = await roomCollection.findOne({ _id: new ObjectId(id) });
+      console.log(room);
+      res.send(room);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 });
     console.log('Pinged your deployment. You successfully connected to MongoDB!');
