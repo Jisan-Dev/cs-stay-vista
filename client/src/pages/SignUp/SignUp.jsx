@@ -40,6 +40,31 @@ const SignUp = () => {
       toast.error(error.code || error.message);
     }
   };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithGoogle();
+      console.log(result);
+      toast.success('Signup Successful', {
+        style: {
+          borderRadius: '10px',
+          background: '#333',
+          color: '#fff',
+        },
+      });
+      navigate('/');
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      toast.error(error.code || error.message, {
+        style: {
+          borderRadius: '10px',
+          background: '#333',
+          color: '#fff',
+        },
+      });
+    }
+  };
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900">
@@ -101,7 +126,7 @@ const SignUp = () => {
           </div>
 
           <div>
-            <button type="submit" className="bg-rose-500 w-full rounded-md py-3 text-white">
+            <button disabled={loading} type="submit" className="bg-rose-500 w-full rounded-md py-3 text-white">
               {loading ? <TbFidgetSpinner className="animate-spin m-auto" /> : 'Continue'}
             </button>
           </div>
@@ -111,11 +136,11 @@ const SignUp = () => {
           <p className="px-3 text-sm dark:text-gray-400">Signup with social accounts</p>
           <div className="flex-1 h-px sm:w-16 dark:bg-gray-700"></div>
         </div>
-        <div className="flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer">
+        <button disabled={loading} onClick={handleGoogleSignIn} className="flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer">
           <FcGoogle size={32} />
 
           <p>Continue with Google</p>
-        </div>
+        </button>
         <p className="px-6 text-sm text-center text-gray-400">
           Already have an account?{' '}
           <Link to="/login" className="hover:underline hover:text-rose-500 text-gray-600">
