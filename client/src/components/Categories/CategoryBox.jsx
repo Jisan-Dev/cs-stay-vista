@@ -7,6 +7,7 @@ const CategoryBox = ({ label, icon: Icon }) => {
   const category = params.get('category');
   const isCategoryMatched = category === label;
   const navigate = useNavigate();
+
   const handleClick = () => {
     let currentQuery = { category: label };
 
