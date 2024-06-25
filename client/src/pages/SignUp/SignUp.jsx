@@ -37,6 +37,7 @@ const SignUp = () => {
       navigate('/');
     } catch (error) {
       console.log(error);
+      setLoading(false);
       toast.error(error.code || error.message);
     }
   };
