@@ -5,7 +5,7 @@ const useToast = () => {
     toast.success(message, {
       style: {
         borderRadius: '10px',
-        background: '#333',
+        background: '#F6536D',
         color: '#fff',
       },
     });
@@ -15,7 +15,7 @@ const useToast = () => {
     toast.error(message, {
       style: {
         borderRadius: '10px',
-        background: '#333',
+        background: '#F6536D',
         color: '#fff',
       },
     });
