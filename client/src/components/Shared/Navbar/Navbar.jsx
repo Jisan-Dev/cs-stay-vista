@@ -62,6 +62,9 @@ const Navbar = () => {
 
                     {user ? (
                       <>
+                        <Link to="/dashboard" className="block px-4 py-3 hover:bg-neutral-100 transition font-semibold">
+                          Dashboard
+                        </Link>
                         <div onClick={logOutHandler} className="px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer">
                           Logout
                         </div>
