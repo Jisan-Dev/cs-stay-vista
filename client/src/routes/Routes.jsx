@@ -7,6 +7,7 @@ import SignUp from '../pages/SignUp/SignUp';
 import RoomDetails from '../pages/RoomDetails/RoomDetails';
 import PrivateRoute from './PrivateRoute';
 import DashboardLayout from '../layouts/DashboardLayout';
+import Statistics from '../pages/Dashboard/Common/Statistics';
 
 export const router = createBrowserRouter([
   {
@@ -37,5 +38,15 @@ export const router = createBrowserRouter([
         <DashboardLayout />
       </PrivateRoute>
     ),
+    children: [
+      {
+        index: true,
+        element: (
+          <PrivateRoute>
+            <Statistics />
+          </PrivateRoute>
+        ),
+      },
+    ],
   },
 ]);
