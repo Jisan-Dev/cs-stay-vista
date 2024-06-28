@@ -1,19 +1,10 @@
-import { useState } from 'react';
 import { categories } from '../Categories/CategoriesData';
 import { DateRange } from 'react-date-range';
 
-const AddRoomForm = ({ dates, datesHandler }) => {
-  const [state, setState] = useState([
-    {
-      startDate: new Date(),
-      endDate: null,
-      key: 'selection',
-    },
-  ]);
-
+const AddRoomForm = ({ dates, datesHandler, handleSubmit, handleImageChange, imgPreview, imgText }) => {
   return (
     <div className="w-full min-h-[calc(100vh-40px)] flex flex-col justify-center items-center text-gray-800 rounded-xl bg-gray-50">
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div className="space-y-6">
             <div className="space-y-1 text-sm">
@@ -70,8 +61,21 @@ const AddRoomForm = ({ dates, datesHandler }) => {
               <div className="file_upload px-5 py-3 relative border-4 border-dotted border-gray-300 rounded-lg">
                 <div className="flex flex-col w-max mx-auto text-center">
                   <label>
-                    <input className="text-sm cursor-pointer w-36 hidden" type="file" name="image" id="image" accept="image/*" hidden />
-                    <div className="bg-rose-500 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-rose-500">Upload Image</div>
+                    <input
+                      className="text-sm cursor-pointer w-36 hidden"
+                      onChange={(e) => handleImageChange(e.target.files[0])}
+                      type="file"
+                      name="image"
+                      id="image"
+                      accept="image/*"
+                      hidden
+                    />
+                    <div className="flex items-center gap-3">
+                      <div className="bg-rose-500 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-rose-500">
+                        {imgText.length > 20 ? imgText.split('.')[0].slice(0, 15) + '...' + imgText.split('.')[1] : imgText}
+                      </div>
+                      {imgPreview && <img src={imgPreview} width={60} height={60} />}
+                    </div>
                   </label>
                 </div>
               </div>
