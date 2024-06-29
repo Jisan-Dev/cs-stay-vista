@@ -80,6 +80,7 @@ async function run() {
       }
     });
 
+    //! ------------- roomCollection--------------------
     // to get all room data
     app.get('/rooms', async (req, res) => {
       const category = req.query.category;
@@ -87,6 +88,13 @@ async function run() {
       if (category && category !== 'null') query = { category };
       const rooms = await roomCollection.find(query).toArray();
       res.send(rooms);
+    });
+
+    // to save a room data in db
+    app.post('/room', async (req, res) => {
+      const room = req.body;
+      const result = await roomCollection.insertOne(room);
+      res.send(result);
     });
 
     // to get a specific room data  by _id

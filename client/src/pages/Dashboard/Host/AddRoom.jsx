@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import AddRoomForm from '../../../components/Forms/AddRoomForm';
 import useAuth from '../../../hooks/useAuth';
 import { imageUpload } from '../../../api/utils/imageUpload';
+import { useMutation } from '@tanstack/react-query';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 
 const AddRoom = () => {
+  const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
   const [imgPreview, setImgPreview] = useState();
   const [imgText, setImgText] = useState('Upload Image');
@@ -11,6 +14,16 @@ const AddRoom = () => {
     startDate: new Date(),
     endDate: null,
     key: 'selection',
+  });
+
+  const { mutateAsync } = useMutation({
+    mutationFn: async (roomData) => {
+      const { data } = axiosSecure.post('/room', roomData);
+      return data;
+    },
+    onSuccess: () => {
+      console.log('Data saved successfully', data);
+    },
   });
 
   const datesHandler = (item) => {
@@ -34,10 +47,13 @@ const AddRoom = () => {
     try {
       const image_url = await imageUpload(formData.image);
       formData.image = image_url;
+      console.log(formData);
+
+      // post data to server to save in db
+      await mutateAsync(formData);
     } catch (error) {
       console.log(error);
     }
-    console.log(formData);
   };
 
   // handle image change
