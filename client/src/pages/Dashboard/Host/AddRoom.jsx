@@ -4,9 +4,14 @@ import useAuth from '../../../hooks/useAuth';
 import { imageUpload } from '../../../api/utils/imageUpload';
 import { useMutation } from '@tanstack/react-query';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import useToast from '../../../hooks/useToast';
+import { useNavigate } from 'react-router-dom';
 
 const AddRoom = () => {
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
+  const [successToast, errorToast] = useToast();
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const [imgPreview, setImgPreview] = useState();
   const [imgText, setImgText] = useState('Upload Image');
@@ -22,7 +27,10 @@ const AddRoom = () => {
       return data;
     },
     onSuccess: () => {
-      console.log('Data saved successfully', data);
+      setLoading(false);
+      successToast('Data saved successfully');
+      console.log('Data saved successfully');
+      navigate('/dashboard/my-listings');
     },
   });
 
@@ -34,6 +42,7 @@ const AddRoom = () => {
   // form handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const form = new FormData(e.target);
     const formData = Object.fromEntries(form.entries());
     formData.host = {
@@ -52,6 +61,8 @@ const AddRoom = () => {
       // post data to server to save in db
       await mutateAsync(formData);
     } catch (error) {
+      setLoading(false);
+      errorToast(error.message);
       console.log(error);
     }
   };
@@ -64,7 +75,15 @@ const AddRoom = () => {
   return (
     <div>
       {/* FORM */}
-      <AddRoomForm dates={dates} datesHandler={datesHandler} handleSubmit={handleSubmit} imgPreview={imgPreview} handleImageChange={handleImageChange} imgText={imgText} />
+      <AddRoomForm
+        dates={dates}
+        datesHandler={datesHandler}
+        handleSubmit={handleSubmit}
+        imgPreview={imgPreview}
+        handleImageChange={handleImageChange}
+        imgText={imgText}
+        loading={loading}
+      />
     </div>
   );
 };
