@@ -6,6 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import useToast from '../../../hooks/useToast';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const AddRoom = () => {
   const axiosSecure = useAxiosSecure();
@@ -74,7 +75,9 @@ const AddRoom = () => {
   };
   return (
     <div>
-      {/* FORM */}
+      <Helmet>
+        <title>StayVista | Add Room</title>
+      </Helmet>
       <AddRoomForm
         dates={dates}
         datesHandler={datesHandler}

@@ -90,6 +90,13 @@ async function run() {
       res.send(rooms);
     });
 
+    // to get all self added room data by a specific host
+    app.get('/my-listings/:email', async (req, res) => {
+      const email = req.params.email;
+      const rooms = await roomCollection.find({ 'host.email': email }).toArray();
+      res.send(rooms);
+    });
+
     // to save a room data in db
     app.post('/room', async (req, res) => {
       const room = req.body;
