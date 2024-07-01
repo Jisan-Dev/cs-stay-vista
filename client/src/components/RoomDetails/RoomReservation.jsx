@@ -7,8 +7,8 @@ import { addDays } from 'date-fns';
 const RoomReservation = ({ room }) => {
   const [state, setState] = useState([
     {
-      startDate: new Date(),
-      endDate: null,
+      startDate: new Date(room?.from),
+      endDate: new Date(room?.to),
       key: 'selection',
     },
   ]);
@@ -24,8 +24,15 @@ const RoomReservation = ({ room }) => {
         <DateRange
           rangeColors={['#F6536D']}
           showDateDisplay={false}
-          editableDateInputs={true}
-          onChange={(item) => setState([item.selection])}
+          onChange={(item) =>
+            setState([
+              {
+                startDate: new Date(room?.from),
+                endDate: new Date(room?.to),
+                key: 'selection',
+              },
+            ])
+          }
           moveRangeOnFirstSelection={false}
           ranges={state}
         />

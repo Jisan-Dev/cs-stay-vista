@@ -97,15 +97,15 @@ const AddRoomForm = ({ dates, datesHandler, handleSubmit, handleImageChange, img
               </div>
 
               <div className="space-y-1 text-sm">
-                <label htmlFor="guest" className="block text-gray-600">
+                <label htmlFor="guests" className="block text-gray-600">
                   Total guest
                 </label>
                 <input
                   className="w-full px-4 py-3 text-gray-800 border border-rose-300 focus:outline-rose-500 rounded-md "
-                  name="total_guest"
-                  id="guest"
+                  name="guests"
+                  id="guests"
                   type="number"
-                  placeholder="Total guest"
+                  placeholder="Total guests"
                   required
                 />
               </div>
