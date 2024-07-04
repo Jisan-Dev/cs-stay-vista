@@ -48,12 +48,13 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const roomCollection = client.db('StayVistaDB').collection('rooms');
+    const usersCollection = client.db('StayVistaDB').collection('users');
 
     // auth related api
     // to generate cookie and set to the http only cookies
     app.post('/jwt', async (req, res) => {
       const user = req.body;
-      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+      const token = jwt.sign(user, process.env.JWT_SECRET, {
         expiresIn: '365d',
       });
       res
@@ -78,6 +79,21 @@ async function run() {
       } catch (err) {
         res.status(500).send(err);
       }
+    });
+
+    //!---------------usersCollection-------------------
+    // to save a user data in db
+    app.put('/user', async (req, res) => {
+      const user = req.body;
+
+      const isExist = await usersCollection.findOne({ email: user?.email });
+      if (isExist) return res.send(isExist);
+
+      const option = { upsert: true };
+      const query = { email: user?.email };
+      const update = { $set: { ...user, timeStamp: Date.now() } };
+      const result = await usersCollection.updateOne(query, update, option);
+      res.send(result);
     });
 
     //! ------------- roomCollection--------------------
