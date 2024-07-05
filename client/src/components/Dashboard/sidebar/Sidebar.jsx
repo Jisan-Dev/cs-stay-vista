@@ -7,10 +7,13 @@ import { NavLink } from 'react-router-dom';
 import useAuth from '../../../hooks/useAuth';
 import { Link } from 'react-router-dom';
 import { MdHomeWork } from 'react-icons/md';
+import useRole from '../../../hooks/useRole';
 
 const Sidebar = () => {
   const { logOut } = useAuth();
   const [isActive, setActive] = useState(false);
+  const [role] = useRole();
+  console.log(role);
 
   // Sidebar Responsive Handler
   const handleToggle = () => {

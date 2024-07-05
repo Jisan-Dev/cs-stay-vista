@@ -110,7 +110,7 @@ async function run() {
     // to get a users info by email
     app.get('/users/:email', async (req, res) => {
       const email = req.params.email;
-      const user = await usersCollection.findOne({ email });
+      const user = await usersCollection.findOne({ email }, { projection: { _id: 0, role: 1 } });
       res.send(user);
     });
 
