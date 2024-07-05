@@ -5,10 +5,12 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { TbFidgetSpinner } from 'react-icons/tb';
 import { imageUpload } from '../../api/utils/imageUpload';
+import useToast from '../../hooks/useToast';
 
 const SignUp = () => {
   const { createUser, loading, setLoading, updateUserProfile, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const [successToast, errorToast] = useToast();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = new FormData(e.target);
@@ -29,18 +31,12 @@ const SignUp = () => {
 
       // 3. Save username and photo in firebase
       await updateUserProfile(formData.name, image_url);
-      toast.success('Signup Successful', {
-        style: {
-          borderRadius: '10px',
-          background: '#333',
-          color: '#fff',
-        },
-      });
+      successToast('Successfully signed up');
       navigate('/');
     } catch (error) {
       console.log(error);
       setLoading(false);
-      toast.error(error.code || error.message);
+      errorToast(error.code || error.message);
     }
   };
 
@@ -48,24 +44,12 @@ const SignUp = () => {
     try {
       const result = await signInWithGoogle();
       console.log(result);
-      toast.success('Signup Successful', {
-        style: {
-          borderRadius: '10px',
-          background: '#333',
-          color: '#fff',
-        },
-      });
+      successToast('Successfully signed up');
       navigate('/');
     } catch (error) {
       console.log(error);
       setLoading(false);
-      toast.error(error.code || error.message, {
-        style: {
-          borderRadius: '10px',
-          background: '#333',
-          color: '#fff',
-        },
-      });
+      errorToast(error.code || error.message);
     }
   };
   return (

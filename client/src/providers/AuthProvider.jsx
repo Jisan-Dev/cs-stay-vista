@@ -69,7 +69,7 @@ const AuthProvider = ({ children }) => {
       status: 'Verified',
     };
     const { data } = await axiosPublic.put('/user', currentUser);
-    console.log('exists', data);
+    console.log(data);
     return data;
   };
 
