@@ -90,10 +90,12 @@ async function run() {
       // check if user already exists
       const isExist = await usersCollection.findOne(query);
       if (isExist) {
+        // if user requested to be a host,
         if (user?.status === 'Requested') {
           const result = await usersCollection.updateOne(query, { $set: { status: user?.status } });
           return res.send(result);
         } else {
+          // if user login again
           return res.send({ 'already-exists': isExist });
         }
       }
@@ -103,6 +105,13 @@ async function run() {
       const update = { $set: { ...user, timeStamp: Date.now() } };
       const result = await usersCollection.updateOne(query, update, option);
       res.send(result);
+    });
+
+    // to get a users info by email
+    app.get('/users/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = await usersCollection.findOne({ email });
+      res.send(user);
     });
 
     // to get all users from db
