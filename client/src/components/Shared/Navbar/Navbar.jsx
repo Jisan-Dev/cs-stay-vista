@@ -85,7 +85,14 @@ const Navbar = () => {
                   <AiOutlineMenu />
                   <div className="hidden md:block">
                     {/* Avatar */}
-                    <img className="rounded-full" referrerPolicy="no-referrer" src={user && user.photoURL ? user.photoURL : avatarImg} alt="profile" height="30" width="30" />
+                    <img
+                      className="rounded-full object-cover"
+                      referrerPolicy="no-referrer"
+                      src={user && user.photoURL ? user.photoURL : avatarImg}
+                      alt="profile"
+                      height="30"
+                      width="30"
+                    />
                   </div>
                 </div>
               </div>

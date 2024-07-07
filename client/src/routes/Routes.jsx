@@ -11,6 +11,7 @@ import Statistics from '../pages/Dashboard/Common/Statistics';
 import AddRoom from '../pages/Dashboard/Host/AddRoom';
 import MyListings from '../pages/Dashboard/Host/MyListings';
 import Profile from '../pages/Dashboard/Common/Profile';
+import ManageUsers from '../pages/Dashboard/Admin/ManageUsers';
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +51,12 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      // ADMIN ROUTES
+      {
+        path: '/dashboard/manage-users',
+        element: <ManageUsers />,
+      },
+      // -------------------
       {
         path: '/dashboard/add-room',
         element: <AddRoom />,
