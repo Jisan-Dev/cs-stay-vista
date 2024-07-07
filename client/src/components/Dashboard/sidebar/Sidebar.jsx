@@ -2,20 +2,21 @@ import { useState } from 'react';
 import { GrLogout } from 'react-icons/gr';
 import { FcSettings } from 'react-icons/fc';
 import { AiOutlineBars } from 'react-icons/ai';
-import { BsFillHouseAddFill, BsGraphUp } from 'react-icons/bs';
+import { BsGraphUp } from 'react-icons/bs';
 import { NavLink } from 'react-router-dom';
 import useAuth from '../../../hooks/useAuth';
 import { Link } from 'react-router-dom';
-import { MdHomeWork } from 'react-icons/md';
 import useRole from '../../../hooks/useRole';
 import MenuItem from './Menu/MenuItem';
 import HostMenu from './Menu/HostMenu';
 import GuestMenu from './Menu/GuestMenu';
 import AdminMenu from './Menu/AdminMenu';
+import ToggleBtn from '../../Shared/Button/ToggleBtn';
 
 const Sidebar = () => {
   const { logOut } = useAuth();
   const [isActive, setActive] = useState(false);
+  const [toggle, setToggle] = useState(true);
   const [role] = useRole();
   console.log(role);
 
@@ -23,6 +24,11 @@ const Sidebar = () => {
   const handleToggle = () => {
     setActive(!isActive);
   };
+
+  const toggleHandler = () => {
+    setToggle(!toggle);
+  };
+
   return (
     <>
       {/* Small Screen Navbar */}
@@ -69,6 +75,7 @@ const Sidebar = () => {
           {/* Nav Items */}
           <div className="flex flex-col justify-between flex-1 mt-6">
             {/* Conditional toggle button here.. */}
+            <div className="mx-auto">{role === 'host' && <ToggleBtn toggleHandler={toggleHandler} toggle={toggle} />}</div>
 
             {/*  Menu Items */}
             <nav>
@@ -77,7 +84,7 @@ const Sidebar = () => {
 
               {/* Add Room */}
               {role === 'guest' && <GuestMenu />}
-              {role === 'host' && <HostMenu />}
+              {role === 'host' ? toggle ? <HostMenu /> : <GuestMenu /> : undefined}
               {role === 'admin' && <AdminMenu />}
             </nav>
           </div>

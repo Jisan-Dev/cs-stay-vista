@@ -3,12 +3,13 @@ import UpdateUserModal from '../../Modal/UpdateUserModal';
 import { useState } from 'react';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import useToast from '../../../hooks/useToast';
+import useAuth from '../../../hooks/useAuth';
 
 const UserDataRow = ({ user, refetch }) => {
   const [successToast, errorToast] = useToast();
   const axiosSecure = useAxiosSecure();
+  const { user: loggedInUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   const { mutateAsync } = useMutation({
@@ -25,6 +26,12 @@ const UserDataRow = ({ user, refetch }) => {
   });
 
   const modalHandler = async (selected) => {
+    if (loggedInUser?.email === user?.email) {
+      errorToast('Action Not Allowed!');
+      setIsOpen(false);
+      return;
+    }
+
     const updateUser = {
       role: selected,
       status: 'Verified',
