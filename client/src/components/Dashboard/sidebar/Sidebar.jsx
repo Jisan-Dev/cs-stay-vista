@@ -9,6 +9,9 @@ import { Link } from 'react-router-dom';
 import { MdHomeWork } from 'react-icons/md';
 import useRole from '../../../hooks/useRole';
 import MenuItem from './Menu/MenuItem';
+import HostMenu from './Menu/HostMenu';
+import GuestMenu from './Menu/GuestMenu';
+import AdminMenu from './Menu/AdminMenu';
 
 const Sidebar = () => {
   const { logOut } = useAuth();
@@ -73,9 +76,9 @@ const Sidebar = () => {
               <MenuItem address={'/dashboard'} icon={BsGraphUp} label={'Statistics'} />
 
               {/* Add Room */}
-              <MenuItem address={'/dashboard/add-room'} icon={BsFillHouseAddFill} label={'Add Room'} />
-              {/* My Listing */}
-              <MenuItem address={'/dashboard/my-listings'} icon={MdHomeWork} label={'My Listings'} />
+              {role === 'guest' && <GuestMenu />}
+              {role === 'host' && <HostMenu />}
+              {role === 'admin' && <AdminMenu />}
             </nav>
           </div>
         </div>

@@ -9,7 +9,7 @@ const Profile = () => {
 
   if (loading || isLoading) return <LoadingSpinner />;
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center min-h-[calc(100vh-40px)]">
       <Helmet>
         <title>Profile</title>
       </Helmet>
