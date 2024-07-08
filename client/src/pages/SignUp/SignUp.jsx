@@ -2,28 +2,34 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
-import toast from 'react-hot-toast';
 import { TbFidgetSpinner } from 'react-icons/tb';
-import { imageUpload } from '../../api/utils/imageUpload';
+// import { imageUpload } from '../../api/utils/imageUpload';
 import useToast from '../../hooks/useToast';
 
 const SignUp = () => {
   const { createUser, loading, setLoading, updateUserProfile, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [successToast, errorToast] = useToast();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = new FormData(e.target);
     const formData = Object.fromEntries(form.entries());
     // formData.image = e.target.image.files[0];
     const imgFormData = new FormData();
-    imgFormData.append('image', formData.image);
+    imgFormData.append('file', formData.image);
+    imgFormData.append('upload_preset', 'ssvmfwvn');
+    imgFormData.append('cloud_name', 'dijckl5ab');
 
     try {
       setLoading(true);
       // 1. Upload image and get image url
-      const image_url = await imageUpload(formData.image);
-      console.log(image_url);
+      // (imgbb)
+      // const image_url = await imageUpload(formData.image);
+
+      // (cloudinary)
+      const { data } = await axios.post('https://api.cloudinary.com/v1_1/dijckl5ab/image/upload', imgFormData);
+      const image_url = data.url;
 
       //2. User Registration
       const result = await createUser(formData.email, formData.password);
@@ -52,6 +58,7 @@ const SignUp = () => {
       errorToast(error.code || error.message);
     }
   };
+
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900">
