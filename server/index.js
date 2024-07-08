@@ -61,6 +61,17 @@ async function run() {
       next();
     };
 
+    // verify host middleware
+    const verifyHost = async (req, res, next) => {
+      const decodedUser = req.decodedUser;
+      const query = { email: decodedUser.email };
+      const user = await usersCollection.findOne(query);
+      if (!user || user.role !== 'admin') {
+        return res.status(403).send({ message: 'forbidden access' });
+      }
+      next();
+    };
+
     // auth related api
     // to generate cookie and set to the http only cookies
     app.post('/jwt', async (req, res) => {
@@ -152,21 +163,21 @@ async function run() {
     });
 
     // to get all self added room data by a specific host
-    app.get('/my-listings/:email', async (req, res) => {
+    app.get('/my-listings/:email', verifyToken, verifyHost, async (req, res) => {
       const email = req.params.email;
       const rooms = await roomCollection.find({ 'host.email': email }).toArray();
       res.send(rooms);
     });
 
     // to save a room data in db
-    app.post('/room', async (req, res) => {
+    app.post('/room', verifyToken, verifyHost, async (req, res) => {
       const room = req.body;
       const result = await roomCollection.insertOne(room);
       res.send(result);
     });
 
     // to delete a room data
-    app.delete('/room/:id', async (req, res) => {
+    app.delete('/room/:id', verifyToken, verifyHost, async (req, res) => {
       const id = req.params.id;
       const result = await roomCollection.deleteOne({ _id: new ObjectId(id) });
       res.send(result);
