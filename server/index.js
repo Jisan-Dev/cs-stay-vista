@@ -22,16 +22,16 @@ app.use(cookieParser());
 // Verify Token Middleware
 const verifyToken = async (req, res, next) => {
   const token = req.cookies?.token;
-  console.log(token);
+  console.log('token inside verifyToken', token);
   if (!token) {
     return res.status(401).send({ message: 'unauthorized access' });
   }
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       console.log(err);
       return res.status(401).send({ message: 'unauthorized access' });
     }
-    req.user = decoded;
+    req.decodedUser = decoded;
     next();
   });
 };
@@ -49,6 +49,17 @@ async function run() {
   try {
     const roomCollection = client.db('StayVistaDB').collection('rooms');
     const usersCollection = client.db('StayVistaDB').collection('users');
+
+    // verify admin middleware
+    const verifyAdmin = async (req, res, next) => {
+      const decodedUser = req.decodedUser;
+      const query = { email: decodedUser.email };
+      const user = await usersCollection.findOne(query);
+      if (!user || user.role !== 'admin') {
+        return res.status(403).send({ message: 'forbidden access' });
+      }
+      next();
+    };
 
     // auth related api
     // to generate cookie and set to the http only cookies
@@ -125,7 +136,7 @@ async function run() {
     });
 
     // to get all users from db
-    app.get('/users', async (req, res) => {
+    app.get('/users', verifyToken, verifyAdmin, async (req, res) => {
       const users = await usersCollection.find().toArray();
       res.send(users);
     });

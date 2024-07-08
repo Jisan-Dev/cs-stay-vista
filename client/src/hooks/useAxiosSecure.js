@@ -8,7 +8,7 @@ export const axiosSecure = axios.create({
   withCredentials: true,
 });
 const useAxiosSecure = () => {
-  const { logOut } = useAuth();
+  const { logOut, setLoading } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
     axiosSecure.interceptors.response.use(
@@ -17,8 +17,9 @@ const useAxiosSecure = () => {
       },
       async (error) => {
         console.log('error tracked in the interceptor', error.response);
+        setLoading(false);
         if (error.response.status === 401 || error.response.status === 403) {
-          await logOut();
+          logOut();
           navigate('/login');
         }
         return Promise.reject(error);
