@@ -12,6 +12,7 @@ import AddRoom from '../pages/Dashboard/Host/AddRoom';
 import MyListings from '../pages/Dashboard/Host/MyListings';
 import Profile from '../pages/Dashboard/Common/Profile';
 import ManageUsers from '../pages/Dashboard/Admin/ManageUsers';
+import AdminRoute from './AdminRoute';
 
 export const router = createBrowserRouter([
   {
@@ -54,7 +55,11 @@ export const router = createBrowserRouter([
       // ADMIN ROUTES
       {
         path: '/dashboard/manage-users',
-        element: <ManageUsers />,
+        element: (
+          <AdminRoute>
+            <ManageUsers />
+          </AdminRoute>
+        ),
       },
       // -------------------
       {
