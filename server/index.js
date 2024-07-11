@@ -50,6 +50,7 @@ async function run() {
   try {
     const roomCollection = client.db('StayVistaDB').collection('rooms');
     const usersCollection = client.db('StayVistaDB').collection('users');
+    const bookingsCollection = client.db('StayVistaDB').collection('bookings');
 
     // verify admin middleware
     const verifyAdmin = async (req, res, next) => {
@@ -201,6 +202,22 @@ async function run() {
       const id = req.params.id;
       const room = await roomCollection.findOne({ _id: new ObjectId(id) });
       res.send(room);
+    });
+
+    // !bookingsCollection
+    // to save a booking data in db
+    app.post('/booking', verifyToken, async (req, res) => {
+      const bookingData = req.body;
+      // save room booking info
+      const roomBookingResult = await bookingsCollection.insertOne(bookingData);
+
+      // update room booked status
+      const roomId = bookingData?.roomId;
+      const query = { _id: new ObjectId(roomId) };
+      const update = { $set: { booked: true } };
+      const roomUpdateResult = await roomCollection.updateOne(query, update);
+      console.log({ roomBookingResult, roomUpdateResult });
+      res.send({ roomBookingResult, roomUpdateResult });
     });
 
     // Send a ping to confirm a successful connection

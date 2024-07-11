@@ -4,9 +4,14 @@ import { useEffect, useState } from 'react';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import useAuth from '../../hooks/useAuth';
 import { ImSpinner9 } from 'react-icons/im';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import useToast from '../../hooks/useToast';
 
-const CheckoutForm = ({ closeModal, bookingInfo }) => {
+const CheckoutForm = ({ closeModal, bookingInfo, refetch }) => {
+  const navigate = useNavigate();
   const { user } = useAuth();
+  const [successToast, errorToast] = useToast();
   const axiosSecure = useAxiosSecure();
   const stripe = useStripe();
   const elements = useElements();
@@ -87,10 +92,30 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
         // create payment info obj
         const paymentInfo = {
           ...bookingInfo,
+          roomId: bookingInfo._id,
           transactionId: paymentIntent.id,
           date: new Date(),
         };
+        delete paymentInfo._id;
         console.log('[paymentInfo]', paymentInfo);
+
+        try {
+          // now save the payment in bookingsCollection (db) and change the booked room's booked property to true
+          const { data } = await axiosSecure.post('/booking', paymentInfo);
+          console.log(data);
+          refetch();
+          closeModal();
+          // successToast('Payment successful. Booking confirmed');
+          Swal.fire({
+            title: `CONGRATS!`,
+            html: `<strong> Your room has been booked </br> successfully!</strong>`,
+            icon: 'success',
+            confirmButtonColor: '#F43F5E',
+          });
+          navigate('/dashboard/my-bookings');
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   };
@@ -118,7 +143,7 @@ const CheckoutForm = ({ closeModal, bookingInfo }) => {
           <button
             disabled={!stripe || !clientSecret || processing || transactionId}
             type="submit"
-            className="inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2">
+            className="inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed">
             {processing ? <ImSpinner9 size={24} className="animate-spin m-auto" /> : `Pay ${bookingInfo?.price}`}
           </button>
           <button
