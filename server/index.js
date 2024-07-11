@@ -5,6 +5,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const port = process.env.PORT || 8000;
 
@@ -71,6 +72,18 @@ async function run() {
       }
       next();
     };
+
+    // stripe create-payment-intent
+    app.post('/stripe/create-payment-intent', async (req, res) => {
+      const { price } = req.body;
+      const amount = parseInt(price * 100);
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: 'usd',
+        payment_method_types: ['card'],
+      });
+      res.send({ clientSecret: paymentIntent.client_secret });
+    });
 
     // auth related api
     // to generate cookie and set to the http only cookies
