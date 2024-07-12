@@ -205,7 +205,7 @@ async function run() {
     });
 
     // update room availability status
-    app.patch('/room/status/:id', async (req, res) => {
+    app.patch('/room/status/:id', verifyToken, async (req, res) => {
       const id = req.params.id;
       const isBooked = req.body.isBooked;
       const query = { _id: new ObjectId(id) };
@@ -228,6 +228,14 @@ async function run() {
       // const roomUpdateResult = await roomCollection.updateOne(query, update);
       // console.log({ roomUpdateResult });
       res.send(result);
+    });
+
+    // to get all bookings data for a specific _id
+    app.get('/bookings/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { 'guest.email': email };
+      const bookings = await bookingsCollection.find(query).toArray();
+      res.send(bookings);
     });
 
     // Send a ping to confirm a successful connection
