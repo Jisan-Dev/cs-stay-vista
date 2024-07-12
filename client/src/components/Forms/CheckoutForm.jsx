@@ -103,6 +103,13 @@ const CheckoutForm = ({ closeModal, bookingInfo, refetch }) => {
           // now save the payment in bookingsCollection (db) and change the booked room's booked property to true
           const { data } = await axiosSecure.post('/booking', paymentInfo);
           console.log(data);
+
+          // change the room's 'isBooked' property to true in db
+          const { data: updateData } = await axiosSecure.patch(`/room/status/${bookingInfo?._id}`, {
+            isBooked: true,
+          });
+          console.log(updateData);
+
           refetch();
           closeModal();
           // successToast('Payment successful. Booking confirmed');

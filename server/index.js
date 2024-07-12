@@ -74,7 +74,7 @@ async function run() {
       next();
     };
 
-    // stripe create-payment-intent
+    //! stripe create-payment-intent
     app.post('/stripe/create-payment-intent', async (req, res) => {
       const { price } = req.body;
       const amount = parseInt(price * 100);
@@ -86,7 +86,7 @@ async function run() {
       res.send({ clientSecret: paymentIntent.client_secret });
     });
 
-    // auth related api
+    //!------------ auth related api --------------------
     // to generate cookie and set to the http only cookies
     app.post('/jwt', async (req, res) => {
       const user = req.body;
@@ -204,20 +204,30 @@ async function run() {
       res.send(room);
     });
 
-    // !bookingsCollection
+    // update room availability status
+    app.patch('/room/status/:id', async (req, res) => {
+      const id = req.params.id;
+      const isBooked = req.body.isBooked;
+      const query = { _id: new ObjectId(id) };
+      const update = { $set: { isBooked } };
+      const result = await roomCollection.updateOne(query, update);
+      res.send(result);
+    });
+
+    // ! ----------------bookingsCollection--------------------
     // to save a booking data in db
     app.post('/booking', verifyToken, async (req, res) => {
       const bookingData = req.body;
       // save room booking info
-      const roomBookingResult = await bookingsCollection.insertOne(bookingData);
+      const result = await bookingsCollection.insertOne(bookingData);
 
       // update room booked status
-      const roomId = bookingData?.roomId;
-      const query = { _id: new ObjectId(roomId) };
-      const update = { $set: { booked: true } };
-      const roomUpdateResult = await roomCollection.updateOne(query, update);
-      console.log({ roomBookingResult, roomUpdateResult });
-      res.send({ roomBookingResult, roomUpdateResult });
+      // const roomId = bookingData?.roomId;
+      // const query = { _id: new ObjectId(roomId) };
+      // const update = { $set: { booked: true } };
+      // const roomUpdateResult = await roomCollection.updateOne(query, update);
+      // console.log({ roomUpdateResult });
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection

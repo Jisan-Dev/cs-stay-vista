@@ -53,10 +53,15 @@ const RoomReservation = ({ room, refetch }) => {
       </div>
       <hr />
       <div onClick={() => setIsOpen(true)} className="p-4">
-        <Button disabled={room?.booked} label={room?.booked ? 'Already Booked' : 'Reserve'} />
+        <Button disabled={room?.isBooked} label={room?.isBooked ? 'Already Booked' : 'Reserve'} />
       </div>
       {/* Modal */}
-      <BookingModal isOpen={isOpen} closeModal={closeModal} bookingInfo={{ ...room, price: totalPrice, guest: { name: user?.displayName } }} refetch={refetch} />
+      <BookingModal
+        isOpen={isOpen}
+        closeModal={closeModal}
+        bookingInfo={{ ...room, price: totalPrice, guest: { name: user?.displayName, email: user?.email, image: user?.photoURL } }}
+        refetch={refetch}
+      />
       <hr />
       <div className="p-4 flex items-center justify-between font-semibold text-lg">
         <div>Total</div>
