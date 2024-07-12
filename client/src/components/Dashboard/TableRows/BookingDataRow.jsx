@@ -16,12 +16,13 @@ const BookingDataRow = ({ booking, refetch }) => {
   const handleDelete = async () => {
     console.log('[from bookingDataRow component]', booking._id);
     try {
-      const { data } = await axiosSecure.delete(`/bookings/${booking._id}`);
-      console.log(data);
+      await axiosSecure.delete(`/bookings/${booking._id}`);
+      await axiosSecure.patch(`/room/status/${booking.roomId}`, { isBooked: false });
       refetch();
       successToast('Booking deleted successfully');
     } catch (error) {
       console.log(error);
+      errorToast('Failed to delete booking');
     }
   };
   return (
