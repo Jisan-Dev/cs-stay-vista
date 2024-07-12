@@ -3,6 +3,7 @@ import BookingDataRow from '../../../components/Dashboard/TableRows/BookingDataR
 import useAuth from '../../../hooks/useAuth';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import { useQuery } from '@tanstack/react-query';
+import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 
 const MyBookings = () => {
   const { user } = useAuth();
@@ -19,6 +20,8 @@ const MyBookings = () => {
     },
   });
   console.log(bookings);
+
+  if (isLoading) return <LoadingSpinner />;
   return (
     <>
       <Helmet>

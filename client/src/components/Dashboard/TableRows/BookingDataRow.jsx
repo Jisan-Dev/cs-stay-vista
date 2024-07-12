@@ -4,6 +4,7 @@ import { useState } from 'react';
 import DeleteModal from '../../Modal/DeleteModal';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import useToast from '../../../hooks/useToast';
+import { useMutation } from '@tanstack/react-query';
 
 const BookingDataRow = ({ booking, refetch }) => {
   const [successToast, errorToast] = useToast();
@@ -13,13 +14,26 @@ const BookingDataRow = ({ booking, refetch }) => {
     setIsOpen(false);
   };
 
-  const handleDelete = async () => {
-    console.log('[from bookingDataRow component]', booking._id);
-    try {
-      await axiosSecure.delete(`/bookings/${booking._id}`);
-      await axiosSecure.patch(`/room/status/${booking.roomId}`, { isBooked: false });
+  // delete
+  const { mutateAsync } = useMutation({
+    mutationFn: async (id) => {
+      const { data } = await axiosSecure.delete(`/bookings/${id}`);
+      return data;
+    },
+    onSuccess: async (data) => {
+      console.log(data);
       refetch();
       successToast('Booking deleted successfully');
+
+      // Change Room's isBooked property back to false
+      await axiosSecure.patch(`/room/status/${booking.roomId}`, { isBooked: false });
+    },
+  });
+
+  const handleDelete = async (id) => {
+    console.log('[from bookingDataRow component]', id);
+    try {
+      await mutateAsync(id);
     } catch (error) {
       console.log(error);
       errorToast('Failed to delete booking');
@@ -65,7 +79,7 @@ const BookingDataRow = ({ booking, refetch }) => {
           <span aria-hidden="true" className="absolute inset-0 bg-red-200 opacity-50 rounded-full"></span>
           <span className="relative">Cancel</span>
         </span>
-        <DeleteModal isOpen={isOpen} closeModal={closeModal} handleDelete={handleDelete} />
+        <DeleteModal isOpen={isOpen} closeModal={closeModal} handleDelete={handleDelete} id={booking?._id} />
       </td>
     </tr>
   );

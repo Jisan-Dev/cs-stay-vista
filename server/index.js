@@ -230,10 +230,18 @@ async function run() {
       res.send(result);
     });
 
-    // to get all bookings data for a specific _id
+    // to get all bookings data for a specific guest
     app.get('/bookings/:email', async (req, res) => {
       const email = req.params.email;
       const query = { 'guest.email': email };
+      const bookings = await bookingsCollection.find(query).toArray();
+      res.send(bookings);
+    });
+
+    // to get all bookings data for a specific host
+    app.get('/manage-bookings/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { 'host.email': email };
       const bookings = await bookingsCollection.find(query).toArray();
       res.send(bookings);
     });
