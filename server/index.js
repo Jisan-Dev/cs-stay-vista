@@ -68,7 +68,7 @@ async function run() {
       const decodedUser = req.decodedUser;
       const query = { email: decodedUser.email };
       const user = await usersCollection.findOne(query);
-      if (!user || user.role !== 'admin') {
+      if (!user || user.role !== 'host') {
         return res.status(403).send({ message: 'forbidden access' });
       }
       next();
@@ -277,6 +277,33 @@ async function run() {
       chartData.unshift(['Day', 'Sales']);
 
       res.send({ totalBookings: bookingDetails.length, totalUsers, totalRooms, totalPrice, chartData });
+    });
+
+    // Host stats
+    app.get('/host-stats', verifyToken, verifyHost, async (req, res) => {
+      const { email } = req.decodedUser;
+      const bookingDetails = await bookingsCollection.find({ 'host.email': email }, { projection: { date: 1, price: 1 } }).toArray();
+      const totalRooms = await roomCollection.countDocuments({ 'host.email': email });
+      const totalPrice = bookingDetails.reduce((acc, curr) => acc + curr.price, 0);
+
+      const { timeStamp } = await usersCollection.findOne({ email }, { projection: { timeStamp: 1 } });
+
+      // const data = [
+      //   ['Day', 'Sales'],
+      //   ['9/5', 1000],
+      //   ['10/2', 1170],
+      //   ['11/1', 660],
+      //   ['12/11', 1030],
+      // ]   send data in this shape
+      const chartData = bookingDetails.map((booking) => {
+        const day = new Date(booking.date).getDate();
+        const month = new Date(booking.date).getMonth();
+        const data = [`${day}/${month}`, booking.price];
+        return data;
+      });
+      chartData.unshift(['Day', 'Sales']);
+
+      res.send({ totalBookings: bookingDetails.length, hostSince: timeStamp, totalRooms, totalPrice, chartData });
     });
 
     // Send a ping to confirm a successful connection
