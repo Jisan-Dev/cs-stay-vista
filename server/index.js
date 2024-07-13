@@ -306,6 +306,32 @@ async function run() {
       res.send({ totalBookings: bookingDetails.length, hostSince: timeStamp, totalRooms, totalPrice, chartData });
     });
 
+    // Guest stats
+    app.get('/guest-stats', verifyToken, async (req, res) => {
+      const { email } = req.decodedUser;
+      const bookingDetails = await bookingsCollection.find({ 'guest.email': email }, { projection: { date: 1, price: 1 } }).toArray();
+      const totalPrice = bookingDetails.reduce((acc, curr) => acc + curr.price, 0);
+
+      const { timeStamp } = await usersCollection.findOne({ email }, { projection: { timeStamp: 1 } });
+
+      // const data = [
+      //   ['Day', 'Sales'],
+      //   ['9/5', 1000],
+      //   ['10/2', 1170],
+      //   ['11/1', 660],
+      //   ['12/11', 1030],
+      // ]   send data in this shape
+      const chartData = bookingDetails.map((booking) => {
+        const day = new Date(booking.date).getDate();
+        const month = new Date(booking.date).getMonth();
+        const data = [`${day}/${month}`, booking.price];
+        return data;
+      });
+      chartData.unshift(['Day', 'Sales']);
+
+      res.send({ totalBookings: bookingDetails.length, guestSince: timeStamp, totalPrice, chartData });
+    });
+
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 });
     console.log('Pinged your deployment. You successfully connected to MongoDB!');
