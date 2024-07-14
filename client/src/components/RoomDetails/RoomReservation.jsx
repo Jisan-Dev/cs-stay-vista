@@ -30,6 +30,9 @@ const RoomReservation = ({ room, refetch }) => {
       <div className="flex items-center gap-1 p-4">
         <div className="text-2xl font-semibold">$ {room?.price}</div>
         <div className="font-light text-neutral-600">night</div>
+        {/* <div className="font-light text-neutral-600">
+          from: {new Date(room?.from).toDateString()} - to: {new Date(room?.to).toDateString()}
+        </div> */}
       </div>
       <hr />
       <div className="flex justify-center">
@@ -37,7 +40,7 @@ const RoomReservation = ({ room, refetch }) => {
         <DateRange
           rangeColors={['#F6536D']}
           showDateDisplay={false}
-          onChange={(item) =>
+          onChange={() =>
             setState([
               {
                 startDate: new Date(room?.from),
