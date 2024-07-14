@@ -23,8 +23,10 @@ app.use(cookieParser());
 // send email
 const sendEmail = (emailAddress, emailData) => {
   const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
+    service: 'gmail',
+    host: 'smtp.gmail.com',
     port: 587,
+    secure: false, // Use `true` for port 465, `false` for all other ports
     auth: {
       user: process.env.TRANSPORTER_EMAIL,
       pass: process.env.TRANSPORTER_PASS,
