@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
+const nodemailer = require('nodemailer');
 const port = process.env.PORT || 8000;
 
 // middleware
@@ -19,6 +19,44 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
+
+// send email
+const sendEmail = (emailAddress, emailData) => {
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.ethereal.email',
+    port: 587,
+    auth: {
+      user: process.env.TRANSPORTER_EMAIL,
+      pass: process.env.TRANSPORTER_PASS,
+    },
+  });
+
+  // verify transporter
+  // verify connection configuration
+  transporter.verify(function (error, success) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Server is ready to take our messages');
+    }
+  });
+
+  const mailBody = {
+    from: `"Stay Vista" <${process.env.TRANSPORTER_EMAIL}>`, // sender address
+    to: emailAddress, // list of receivers
+    subject: emailData.subject, // Subject line
+    html: emailData.message, // html body
+  };
+
+  // send mail with defined transport object
+  transporter.sendMail(mailBody, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('email sent: ' + info.response);
+    }
+  });
+};
 
 // Verify Token Middleware
 const verifyToken = async (req, res, next) => {
@@ -231,12 +269,17 @@ async function run() {
       // save room booking info
       const result = await bookingsCollection.insertOne(bookingData);
 
-      // update room booked status
-      // const roomId = bookingData?.roomId;
-      // const query = { _id: new ObjectId(roomId) };
-      // const update = { $set: { booked: true } };
-      // const roomUpdateResult = await roomCollection.updateOne(query, update);
-      // console.log({ roomUpdateResult });
+      // send email to guest
+      sendEmail(bookingData?.guest?.email, {
+        subject: 'Your booking is successful!',
+        message: `You've successfully booked a room through StayVista! Transaction Id: ${bookingData?.transactionId}`,
+      });
+      // send email to host
+      sendEmail(bookingData?.host?.email, {
+        subject: 'Your room got booked!',
+        message: `Your room has been successfully booked by a guest! Transaction Id: ${bookingData?.transactionId}. Get ready to welcome ${bookingData?.guest?.name}`,
+      });
+
       res.send(result);
     });
 

@@ -57,11 +57,11 @@ const BookingDataRow = ({ booking, refetch }) => {
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <div className="block relative">
-              <img alt="profile" src={booking?.guest?.image} className="mx-auto object-cover rounded h-10 w-15 " />
+              <img alt="profile" src={booking?.host?.image} className="mx-auto object-cover rounded h-10 w-15 " />
             </div>
           </div>
           <div className="ml-3">
-            <p className="text-gray-900 whitespace-no-wrap">{booking?.guest?.name}</p>
+            <p className="text-gray-900 whitespace-no-wrap">{booking?.host?.name}</p>
           </div>
         </div>
       </td>
