@@ -49,8 +49,9 @@ const UpdateRoomModal = ({ setIsEditModalOpen, isOpen, room, refetch }) => {
       const { data } = await axiosSecure.put(`/room/update/${room?._id}`, roomData);
       return data;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['room', room?._id] });
+    onSuccess: async (data) => {
+      // await queryClient.invalidateQueries({ queryKey: ['room', room?._id] });
+      await queryClient.refetchQueries({ queryKey: ['room', room?._id] });
       console.log(data);
       refetch();
       setIsEditModalOpen(false);
